@@ -20,9 +20,9 @@ public class Main {
             lightIter++;
         }
 
-        for (char c:lightBulbs) {
+        //Output light bulbs, uncomment for debugging
+        for (char c:lightBulbs)
             System.out.println(c);
-        }
 
     }
 }
