@@ -24,5 +24,39 @@ public class Main {
         for (char c:lightBulbs)
             System.out.println(c);
 
+        FindDefective(lightBulbs, arraySize, (int) Math.ceil((double)arraySize/2));
+
+    }
+
+    private static void FindDefective(Character[] lightBulbs, int arraySize, int pivot) {
+
+        //start by searching the character array for a zero. If its there, create a right and left
+        //sub array and assign them each a thread
+        boolean containsZero = false;
+        for (char c : lightBulbs) {
+            if (c == '0') {
+                containsZero = true;
+                break;
+            }
+        }
+        if(containsZero){
+            //if there is a zero, we divide the array based on the pivot
+            Character[] leftBulbs = new Character[pivot];
+            Character[] rightBulbs = new Character[pivot];
+            for (int i = 0; i < pivot; i++) {
+                leftBulbs[i] = lightBulbs[i];
+                rightBulbs[lightBulbs.length/2 - i - 1] = lightBulbs[lightBulbs.length - i - 1];//todo: check that it should be -1
+            }
+            System.out.println("Left");
+            for (char c:leftBulbs) System.out.println(c);
+            System.out.println("Right");
+            for (char c:rightBulbs) System.out.println(c);
+
+            //FindDefective();
+        }
+        if (!containsZero) {
+            System.out.println("Array Contains no zeros");
+        }
+
     }
 }
