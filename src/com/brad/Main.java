@@ -2,6 +2,7 @@ package com.brad;
 
 import java.io.*;
 import java.nio.file.Paths;
+import java.util.Arrays;
 
 public class Main {
 
@@ -11,7 +12,7 @@ public class Main {
         int arraySize;
         BufferedReader in = new BufferedReader(new FileReader(file));
         arraySize = Integer.parseInt(in.readLine());
-        Character[] lightBulbs = new Character[arraySize];
+        char[] lightBulbs = new char[arraySize];
         System.out.println("There are " + lightBulbs.length + " light bulbs in this example.");
         String str;
         int lightIter = 0;
@@ -20,15 +21,15 @@ public class Main {
             lightIter++;
         }
 
-        //Output light bulbs, uncomment for debugging
-        for (char c:lightBulbs)
-            System.out.println(c);
+        //Debug: Output light bulbs
+//        for (char c : lightBulbs)
+//            System.out.println(c);
 
-        FindDefective(lightBulbs, arraySize, (int) Math.ceil((double)arraySize/2));
+        FindDefective(lightBulbs, arraySize, (int) Math.ceil((double) arraySize / 2));
 
     }
 
-    private static void FindDefective(Character[] lightBulbs, int arraySize, int pivot) {
+    private static void FindDefective(char[] lightBulbs, int arraySize, int pivot) {
 
         //start by searching the character array for a zero. If its there, create a right and left
         //sub array and assign them each a thread
@@ -39,18 +40,17 @@ public class Main {
                 break;
             }
         }
-        if(containsZero){
-            //if there is a zero, we divide the array based on the pivot
-            Character[] leftBulbs = new Character[pivot];
-            Character[] rightBulbs = new Character[pivot];
-            for (int i = 0; i < pivot; i++) {
-                leftBulbs[i] = lightBulbs[i];
-                rightBulbs[lightBulbs.length/2 - i - 1] = lightBulbs[lightBulbs.length - i - 1];//todo: check that it should be -1
-            }
-            System.out.println("Left");
-            for (char c:leftBulbs) System.out.println(c);
-            System.out.println("Right");
-            for (char c:rightBulbs) System.out.println(c);
+        if (containsZero) {
+            // Function to split array into two parts in Java
+            char[] leftBulbs = new char[(arraySize + 1) / 2];
+            char[] rightBulbs = new char[arraySize - leftBulbs.length];
+
+            System.arraycopy(lightBulbs, 0, leftBulbs, 0, leftBulbs.length);
+            System.arraycopy(lightBulbs, leftBulbs.length, rightBulbs, 0, rightBulbs.length);
+
+            //Debug: print left and right sub arrays
+            System.out.println(Arrays.toString(leftBulbs));
+            System.out.println(Arrays.toString(rightBulbs));
 
             //FindDefective();
         }
