@@ -17,7 +17,7 @@ public class Main {
         String str;
         int lightIter = 0;
         while ((str = in.readLine()) != null) {
-            if(lightIter > arraySize)
+            if (lightIter > arraySize)
                 break;
             lightBulbs[lightIter] = str.charAt(0);
             lightIter++;
@@ -27,11 +27,10 @@ public class Main {
 //        for (char c : lightBulbs)
 //            System.out.println(c);
 
-        if(arraySize != lightBulbs.length) {
+        if (arraySize != lightBulbs.length) {
             System.out.println("Array size does not match inputted array. Please try again.");
             return;
-        }
-        else
+        } else
             FindDefective(lightBulbs, arraySize, (int) Math.ceil((double) arraySize / 2));
         java.lang.Thread.activeCount();
 
@@ -49,7 +48,7 @@ public class Main {
                 break;
             }
         }
-        if (containsZero && arraySize >=2) {
+        if (containsZero && arraySize >= 2) {
             // Function to split array into two parts in Java
             char[] leftBulbs = new char[pivot + 1 / 2];
             char[] rightBulbs = new char[arraySize - leftBulbs.length];
@@ -63,19 +62,25 @@ public class Main {
 
 
             //make the recursive call to the next sub arrays. Create each call in its own thread
-            Thread thread1 = new Thread(new Runnable(){
+            Thread thread1 = new Thread(new Runnable() {
                 public void run() {
                     try {
-                        FindDefective(leftBulbs, leftBulbs.length, (int) Math.ceil((double) arraySize / 2) );
+                        if(FindDefective(leftBulbs, leftBulbs.length, (int) Math.ceil((double) leftBulbs.length / 2)))
+                            System.out.println("Zero here: left");
+                        else
+                            System.out.println("No zero: left");
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
                 }
             });
-            Thread thread2 = new Thread(new Runnable(){
+            Thread thread2 = new Thread(new Runnable() {
                 public void run() {
                     try {
-                        FindDefective(rightBulbs, rightBulbs.length, (int) Math.ceil((double)rightBulbs.length/2));
+                        if(FindDefective(rightBulbs, rightBulbs.length, (int) Math.ceil((double) rightBulbs.length / 2)))
+                            System.out.println("Zero here: right");
+                        else
+                            System.out.println("No zero: right");
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -86,14 +91,11 @@ public class Main {
             thread2.start();
             thread1.join();
             thread2.join();
-         }
-        else if(containsZero && arraySize == 1) {
-            System.out.println(Arrays.toString(lightBulbs));
+        } else if (containsZero && arraySize == 1) {
+            //System.out.println("Zero found: " + Arrays.toString(lightBulbs));
             return true;
-        }
-        else if (!containsZero) {
-            System.out.println("End of branch");
-            System.out.println(Arrays.toString(lightBulbs));
+        } else if (!containsZero) {
+            //System.out.println("Min array, no zero: " + Arrays.toString(lightBulbs));
             return false;
 
         }
