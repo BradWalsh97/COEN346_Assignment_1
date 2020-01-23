@@ -6,7 +6,7 @@ import java.util.Arrays;
 
 public class Main {
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, InterruptedException {
         //Start by getting the input file and creating an array consisting of all the light bulbs
         File file = new File(Paths.get("input.txt").toAbsolutePath().toString());
         int arraySize;
@@ -29,7 +29,7 @@ public class Main {
 
     }
 
-    private static void FindDefective(char[] lightBulbs, int arraySize, int pivot) {
+    private static void FindDefective(char[] lightBulbs, int arraySize, int pivot) throws InterruptedException {
 
         //start by searching the character array for a zero. If its there, create a right and left
         //sub array and assign them each a thread
@@ -42,7 +42,7 @@ public class Main {
         }
         if (containsZero) {
             // Function to split array into two parts in Java
-            char[] leftBulbs = new char[(arraySize + 1) / 2];
+            char[] leftBulbs = new char[pivot / 2];
             char[] rightBulbs = new char[arraySize - leftBulbs.length];
 
             System.arraycopy(lightBulbs, 0, leftBulbs, 0, leftBulbs.length);
@@ -52,8 +52,32 @@ public class Main {
             System.out.println(Arrays.toString(leftBulbs));
             System.out.println(Arrays.toString(rightBulbs));
 
-            //FindDefective();
-        }
+
+            //make the recursive call to the next sub arrays. Create each call in its own thread
+            Thread thread1 = new Thread(new Runnable(){
+                public void run() {
+                    try {
+                        FindDefective(leftBulbs, leftBulbs.length, (int) Math.ceil((double) arraySize / 2) );
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+            Thread thread2 = new Thread(new Runnable(){
+                public void run() {
+                    try {
+                        FindDefective(rightBulbs, rightBulbs.length, (int) Math.ceil((double)rightBulbs.length/2));
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+
+            thread1.start();
+            thread2.start();
+            thread1.join();
+            thread2.join();
+         }
         if (!containsZero) {
             System.out.println("Array Contains no zeros");
         }
