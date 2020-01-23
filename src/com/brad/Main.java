@@ -17,6 +17,8 @@ public class Main {
         String str;
         int lightIter = 0;
         while ((str = in.readLine()) != null) {
+            if(lightIter > arraySize)
+                break;
             lightBulbs[lightIter] = str.charAt(0);
             lightIter++;
         }
@@ -25,11 +27,18 @@ public class Main {
 //        for (char c : lightBulbs)
 //            System.out.println(c);
 
-        FindDefective(lightBulbs, arraySize, (int) Math.ceil((double) arraySize / 2));
+        if(arraySize != lightBulbs.length) {
+            System.out.println("Array size does not match inputted array. Please try again.");
+            return;
+        }
+        else
+            FindDefective(lightBulbs, arraySize, (int) Math.ceil((double) arraySize / 2));
+        java.lang.Thread.activeCount();
 
     }
 
-    private static void FindDefective(char[] lightBulbs, int arraySize, int pivot) throws InterruptedException {
+    //return true if there is a zero present at the base array. False if theres ones.
+    private static boolean FindDefective(char[] lightBulbs, int arraySize, int pivot) throws InterruptedException {
 
         //start by searching the character array for a zero. If its there, create a right and left
         //sub array and assign them each a thread
@@ -40,17 +49,17 @@ public class Main {
                 break;
             }
         }
-        if (containsZero) {
+        if (containsZero && arraySize >=2) {
             // Function to split array into two parts in Java
-            char[] leftBulbs = new char[pivot / 2];
+            char[] leftBulbs = new char[pivot + 1 / 2];
             char[] rightBulbs = new char[arraySize - leftBulbs.length];
 
             System.arraycopy(lightBulbs, 0, leftBulbs, 0, leftBulbs.length);
             System.arraycopy(lightBulbs, leftBulbs.length, rightBulbs, 0, rightBulbs.length);
 
             //Debug: print left and right sub arrays
-            System.out.println(Arrays.toString(leftBulbs));
-            System.out.println(Arrays.toString(rightBulbs));
+//            System.out.println(Arrays.toString(leftBulbs));
+//            System.out.println(Arrays.toString(rightBulbs));
 
 
             //make the recursive call to the next sub arrays. Create each call in its own thread
@@ -78,9 +87,16 @@ public class Main {
             thread1.join();
             thread2.join();
          }
-        if (!containsZero) {
-            System.out.println("Array Contains no zeros");
+        else if(containsZero && arraySize == 1) {
+            System.out.println(Arrays.toString(lightBulbs));
+            return true;
         }
+        else if (!containsZero) {
+            System.out.println("End of branch");
+            System.out.println(Arrays.toString(lightBulbs));
+            return false;
 
+        }
+        return false;
     }
 }
