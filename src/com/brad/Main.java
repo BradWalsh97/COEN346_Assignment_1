@@ -31,13 +31,11 @@ public class Main {
             System.out.println("Array size does not match inputted array. Please try again.");
             return;
         } else
-            FindDefective(lightBulbs, arraySize, (int) Math.ceil((double) arraySize / 2));
-        java.lang.Thread.activeCount();
-
+            FindDefective(lightBulbs, arraySize, (int) Math.ceil((double) arraySize / 2), 0);
     }
 
-    //return true if there is a zero present at the base array. False if theres ones.
-    private static boolean FindDefective(char[] lightBulbs, int arraySize, int pivot) throws InterruptedException {
+    //return true if there is a zero present at the base array. False if there's ones.
+    private static boolean FindDefective(char[] lightBulbs, int arraySize, int pivot, int leftIndex) throws InterruptedException {
 
         //start by searching the character array for a zero. If its there, create a right and left
         //sub array and assign them each a thread
@@ -48,9 +46,10 @@ public class Main {
                 break;
             }
         }
+
         if (containsZero && arraySize >= 2) {
             // Function to split array into two parts in Java
-            char[] leftBulbs = new char[pivot + 1 / 2];
+            char[] leftBulbs = new char[(pivot + 1) / 2];
             char[] rightBulbs = new char[arraySize - leftBulbs.length];
 
             System.arraycopy(lightBulbs, 0, leftBulbs, 0, leftBulbs.length);
@@ -65,7 +64,7 @@ public class Main {
             Thread thread1 = new Thread(new Runnable() {
                 public void run() {
                     try {
-                        if(FindDefective(leftBulbs, leftBulbs.length, (int) Math.ceil((double) leftBulbs.length / 2)))
+                        if(FindDefective(leftBulbs, leftBulbs.length, (int) Math.ceil((double) leftBulbs.length / 2), 0))
                             System.out.println("Zero here: left");
                         else
                             System.out.println("No zero: left");
@@ -77,10 +76,11 @@ public class Main {
             Thread thread2 = new Thread(new Runnable() {
                 public void run() {
                     try {
-                        if(FindDefective(rightBulbs, rightBulbs.length, (int) Math.ceil((double) rightBulbs.length / 2)))
-                            System.out.println("Zero here: right");
-                        else
-                            System.out.println("No zero: right");
+                        FindDefective(rightBulbs, rightBulbs.length, (int) Math.ceil((double) rightBulbs.length / 2), rightBulbs.length);
+//                        if(FindDefective(rightBulbs, rightBulbs.length, (int) Math.ceil((double) rightBulbs.length / 2), rightBulbs.length))
+//                            System.out.println("Zero here: right");
+//                        else
+//                            System.out.println("No zero: right");
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -91,13 +91,15 @@ public class Main {
             thread2.start();
             thread1.join();
             thread2.join();
+
         } else if (containsZero && arraySize == 1) {
             //System.out.println("Zero found: " + Arrays.toString(lightBulbs));
+            System.out.println("Item: " + Arrays.toString(lightBulbs) + " Index: " + leftIndex);
             return true;
         } else if (!containsZero) {
             //System.out.println("Min array, no zero: " + Arrays.toString(lightBulbs));
+            //System.out.println("Item: " + Arrays.toString(lightBulbs) + " Index: " + leftIndex);
             return false;
-
         }
         return false;
     }
