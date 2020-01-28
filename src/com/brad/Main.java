@@ -76,7 +76,7 @@ public class Main {
             Thread thread2 = new Thread(new Runnable() {
                 public void run() {
                     try {
-                        FindDefective(rightBulbs, rightBulbs.length, (int) Math.ceil((double) rightBulbs.length / 2), rightBulbs.length);
+                        FindDefective(rightBulbs, rightBulbs.length, (int) Math.ceil((double) rightBulbs.length / 2), rightBulbs.length); //right bulbs.length doesn't work either
 //                        if(FindDefective(rightBulbs, rightBulbs.length, (int) Math.ceil((double) rightBulbs.length / 2), rightBulbs.length))
 //                            System.out.println("Zero here: right");
 //                        else
