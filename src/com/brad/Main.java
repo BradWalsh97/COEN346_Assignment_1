@@ -1,8 +1,11 @@
 package com.brad;
 
+import java.awt.image.AreaAveragingScaleFilter;
 import java.io.*;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class Main {
 
@@ -28,17 +31,34 @@ public class Main {
 //            System.out.println(c);
 
         if (arraySize != lightBulbs.length) {
-            System.out.println("Array size does not match inputted array. Please try again.");
+            System.out.println("Array size does not match inputted array. Please try again."); //todo: input error checking
             return;
         } else
-            FindDefective(lightBulbs, arraySize, (int) Math.ceil((double) arraySize / 2), 0);
+            FindDefective(lightBulbs, arraySize);
+    }
+
+    private static void FindDefective(char[] lightBulbs, int arraySize) throws InterruptedException {
+        ArrayList<Integer> emptyList = new ArrayList<Integer>();
+        ArrayList<Integer> deadBulbs = FindDefective(lightBulbs, arraySize, (int) Math.ceil((double) arraySize / 2), emptyList);
+        System.out.println("There are " + deadBulbs.size() + " dead bulbs in the array.");
+        System.out.println("The dead bulbs are: ");
+        for (int i = 0; i < deadBulbs.size(); i++) {
+            if(deadBulbs.get(i) == -1)
+                continue;
+            System.out.println("Bulb " + deadBulbs.get(i));
+        }
+        System.out.println("Size: " + deadBulbs.size());
+
     }
 
     //return true if there is a zero present at the base array. False if there's ones.
-    private static boolean FindDefective(char[] lightBulbs, int arraySize, int pivot, int leftIndex) throws InterruptedException {
+    private static ArrayList<Integer> FindDefective(char[] lightBulbs, int arraySize, int pivot, ArrayList<Integer> list) throws InterruptedException {
+        ArrayList<Integer> emptyList = new ArrayList<>();
+//        int[] currentReturn;
+//        int[] leftValues;
+//        int[] rightValues;
 
-        //start by searching the character array for a zero. If its there, create a right and left
-        //sub array and assign them each a thread
+        //check if array has zeros
         boolean containsZero = false;
         for (char c : lightBulbs) {
             if (c == '0') {
@@ -55,52 +75,46 @@ public class Main {
             System.arraycopy(lightBulbs, 0, leftBulbs, 0, leftBulbs.length);
             System.arraycopy(lightBulbs, leftBulbs.length, rightBulbs, 0, rightBulbs.length);
 
-            //Debug: print left and right sub arrays
-//            System.out.println(Arrays.toString(leftBulbs));
-//            System.out.println(Arrays.toString(rightBulbs));
+//            list.addAll(FindDefective(leftBulbs, leftBulbs.length, (int) Math.ceil((double) arraySize / 2), list));
+//            list.addAll(FindDefective(rightBulbs, rightBulbs.length, (int) Math.ceil((double) arraySize / 2), list));
+            emptyList.addAll(FindDefective(leftBulbs, leftBulbs.length, (int) Math.ceil((double) arraySize / 2), list));
+            emptyList.addAll(FindDefective(rightBulbs, rightBulbs.length, (int) Math.ceil((double) arraySize / 2), list));
+            list.addAll(emptyList);
+            //list.addAll(emptyList);
 
-
-            //make the recursive call to the next sub arrays. Create each call in its own thread
-            Thread thread1 = new Thread(new Runnable() {
-                public void run() {
-                    try {
-                        if(FindDefective(leftBulbs, leftBulbs.length, (int) Math.ceil((double) leftBulbs.length / 2), 0))
-                            System.out.println("Zero here: left");
-                        else
-                            System.out.println("No zero: left");
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-            });
-            Thread thread2 = new Thread(new Runnable() {
-                public void run() {
-                    try {
-                        FindDefective(rightBulbs, rightBulbs.length, (int) Math.ceil((double) rightBulbs.length / 2), rightBulbs.length); //right bulbs.length doesn't work either
-//                        if(FindDefective(rightBulbs, rightBulbs.length, (int) Math.ceil((double) rightBulbs.length / 2), rightBulbs.length))
-//                            System.out.println("Zero here: right");
-//                        else
-//                            System.out.println("No zero: right");
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-            });
-
-            thread1.start();
-            thread2.start();
-            thread1.join();
-            thread2.join();
-
+//            Thread leftThread = new Thread(new Runnable() {
+//                @Override
+//                public void run() {
+//                    try {
+//                        list.addAll(FindDefective(leftBulbs, leftBulbs.length, (int) Math.ceil((double) arraySize / 2), list));
+//                    } catch (InterruptedException e) {
+//                        e.printStackTrace();
+//                    }
+//                }
+//            });
+//            Thread rightThread = new Thread(new Runnable() {
+//                @Override
+//                public void run() {
+//                    try {
+//                        list.addAll(FindDefective(rightBulbs, rightBulbs.length, (int) Math.ceil((double) arraySize / 2), list));
+//                    } catch (InterruptedException e) {
+//                        e.printStackTrace();
+//                    }
+//                }
+//            });
+//
+//            leftThread.start();
+//            rightThread.start();
+//            leftThread.join();
+//            rightThread.join();
         } else if (containsZero && arraySize == 1) {
-            //System.out.println("Zero found: " + Arrays.toString(lightBulbs));
-            System.out.println("Item: " + Arrays.toString(lightBulbs) + " Index: " + leftIndex);
-            return true;
-        } else if (!containsZero) {
-            //System.out.println("Min array, no zero: " + Arrays.toString(lightBulbs));
-            //System.out.println("Item: " + Arrays.toString(lightBulbs) + " Index: " + leftIndex);
-            return false;
+            list.add(pivot);
+            return list;
         }
-        return false;
+
+        list.add(-1);
+        return list;
     }
 }
+
+//return the pivot as position as variable
