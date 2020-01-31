@@ -1,13 +1,23 @@
 package com.brad;
 
+import javax.swing.text.Style;
 import java.awt.image.AreaAveragingScaleFilter;
 import java.io.*;
+import java.lang.management.ManagementFactory;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+
+
 public class Main {
+    public  static class MaxThreadCounter{
+        public static int MaxThreadCount;
+        public synchronized int getMaxThreadCounter() {return this.MaxThreadCount;}
+        public synchronized void setMaxThreadCounter(int max) {this.MaxThreadCount = max;}
+    }
+    private static MaxThreadCounter MaxThreads = new MaxThreadCounter();
 
     public static void main(String[] args) throws IOException, InterruptedException {
         //Start by getting the input file and creating an array consisting of all the light bulbs
@@ -26,6 +36,7 @@ public class Main {
             lightIter++;
         }
 
+        MaxThreads.setMaxThreadCounter(0);
         //Debug: Output light bulbs
 //        for (char c : lightBulbs)
 //            System.out.println(c);
@@ -33,8 +44,10 @@ public class Main {
         if (arraySize != lightBulbs.length) {
             System.out.println("Array size does not match inputted array. Please try again."); //todo: input error checking
             return;
-        } else
-            FindDefective(lightBulbs, 0, lightBulbs.length - 1 );
+        } else {
+            FindDefective(lightBulbs, 0, lightBulbs.length - 1);
+            System.out.println("This program took " + MaxThreads.getMaxThreadCounter() + " threads.");
+        }
 
     }
 
@@ -51,7 +64,11 @@ public class Main {
             System.out.println("All 1s");
             return;
         }
-
+        //TODO: Try to make this global and mutex it
+        int threadCount = ManagementFactory.getThreadMXBean().getThreadCount();
+        if (threadCount > MaxThreads.getMaxThreadCounter())
+            MaxThreads.setMaxThreadCounter(threadCount);
+        
         // Traverse left side & right side of the array if possible
         if (pivot - startingIndex >= 1 && lastIndex - pivot >= 1) {
             Thread leftArrayThread = new Thread(new Runnable() {
