@@ -10,10 +10,10 @@ public class hint {
         // the code
         int[] inputArray = new int[] { 1, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0 };
 
-        defectiveBulb(inputArray, 0, inputArray.length - 1);
+        FindDefective(inputArray, 0, inputArray.length - 1);
     }
 
-    public static void defectiveBulb(int[] array, int startingIndex, int lastIndex) {
+    public static void FindDefective(int[] array, int startingIndex, int lastIndex) {
         int pivot = startingIndex + (lastIndex - startingIndex) / 2;
 
         if ((pivot == startingIndex) && array[pivot] == 0) {
@@ -29,12 +29,12 @@ public class hint {
 
         // Traverse left side of the array
         if (pivot - startingIndex >= 1) {
-            defectiveBulb(array, startingIndex, pivot);
+            FindDefective(array, startingIndex, pivot);
         }
 
         // Traverse right side of the array
         if (lastIndex - pivot >= 1) {
-            defectiveBulb(array, pivot + 1, lastIndex);
+            FindDefective(array, pivot + 1, lastIndex);
         }
 
     }

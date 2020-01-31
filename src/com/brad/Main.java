@@ -15,14 +15,14 @@ public class Main {
         int arraySize;
         BufferedReader in = new BufferedReader(new FileReader(file));
         arraySize = Integer.parseInt(in.readLine());
-        char[] lightBulbs = new char[arraySize];
+        int[] lightBulbs = new int[arraySize];
         System.out.println("There are " + lightBulbs.length + " light bulbs in this example.");
         String str;
         int lightIter = 0;
         while ((str = in.readLine()) != null) {
             if (lightIter > arraySize)
                 break;
-            lightBulbs[lightIter] = str.charAt(0);
+            lightBulbs[lightIter] = Integer.parseInt(str);
             lightIter++;
         }
 
@@ -34,8 +34,98 @@ public class Main {
             System.out.println("Array size does not match inputted array. Please try again."); //todo: input error checking
             return;
         } else
-            FindDefective(lightBulbs, arraySize);
+            FindDefective(lightBulbs, 0, lightBulbs.length - 1 );
+
     }
+
+    public static void FindDefective(int[] array, int startingIndex, int lastIndex) throws InterruptedException {
+        int pivot = startingIndex + (lastIndex - startingIndex) / 2;
+
+        if ((pivot == startingIndex) && array[pivot] == 0) {
+            ArrayList<Integer> positions = new ArrayList<Integer>();
+            positions.add(startingIndex);
+            positions.forEach((n) -> System.out.println("Defective bulb in position: " + n));
+        }
+
+        if (noDefective(array)) {
+            System.out.println("All 1s");
+            return;
+        }
+
+        // Traverse left side & right side of the array if possible
+        if (pivot - startingIndex >= 1 && lastIndex - pivot >= 1) {
+            Thread leftArrayThread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        FindDefective(array, startingIndex, pivot);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+            Thread rightArrayThread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        FindDefective(array, pivot + 1, lastIndex);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+
+            leftArrayThread.start();
+            rightArrayThread.start();
+            leftArrayThread.join();
+            leftArrayThread.join();
+        }
+
+        //Traverse just left side of the array
+        else if(pivot - startingIndex >= 1){
+            Thread leftArrayThread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        FindDefective(array, startingIndex, pivot);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+            leftArrayThread.start();
+            leftArrayThread.join();
+        }
+        // Traverse just  right side of the array
+        else if (lastIndex - pivot >= 1) {
+            Thread rightArrayThread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        FindDefective(array, pivot + 1, lastIndex);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+            rightArrayThread.start();
+            rightArrayThread.join();
+        }
+
+
+
+    }
+
+    // Check if the array has no defective elements
+    public static boolean noDefective(int[] array) {
+        for (int i = 0; i < array.length; i++) {
+            if (array[i] == 0) {
+                return false;
+            }
+        }
+        return true;
+    }
+    /*
 
     private static void FindDefective(char[] lightBulbs, int arraySize) throws InterruptedException {
         ArrayList<Integer> emptyList = new ArrayList<Integer>();
@@ -50,6 +140,8 @@ public class Main {
         System.out.println("Size: " + deadBulbs.size());
 
     }
+
+
 
     //return true if there is a zero present at the base array. False if there's ones.
     private static ArrayList<Integer> FindDefective(char[] lightBulbs, int arraySize, int pivot, ArrayList<Integer> list) throws InterruptedException {
@@ -115,6 +207,7 @@ public class Main {
         list.add(-1);
         return list;
     }
+    */
 }
 
 //return the pivot as position as variable
