@@ -39,14 +39,17 @@ public class Main {
     public static void FindDefective(int[] array, int startingIndex, int lastIndex) throws InterruptedException {
         int pivot = startingIndex + (lastIndex - startingIndex) / 2;
 
+        //If the array is only one element, and its a 0, print the index of that 0
         if ((lastIndex == startingIndex) && (array[pivot] == 0)) {
                 System.out.println("Defective bulb in position: " + pivot);
         }
 
+        //Otherwise, if there are no zeros in the array (all bulbs light up) do nothing
         else if (noDefective(array, startingIndex, lastIndex)) {
             return;
         }
-        
+
+        //If there are defective bulbs, split the array into two new array threads and call find defective
         else {
             Thread leftArrayThread = new Thread(new Runnable() {
                 @Override
