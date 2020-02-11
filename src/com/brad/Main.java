@@ -68,7 +68,7 @@ public class Main {
         int threadCount = ManagementFactory.getThreadMXBean().getThreadCount();
         if (threadCount > MaxThreads.getMaxThreadCounter())
             MaxThreads.setMaxThreadCounter(threadCount);
-        
+
         // Traverse left side & right side of the array if possible
         if (pivot - startingIndex >= 1 && lastIndex - pivot >= 1) {
             Thread leftArrayThread = new Thread(new Runnable() {
